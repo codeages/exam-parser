@@ -1,4 +1,14 @@
 {
+    "name" : "codeages/exam-parser",
+    "type" : "library",
+    "description" : "Exam Parser",
+    "authors": [
+        {
+            "name": "Codeages Team",
+            "email": "team@codeages.com",
+            "homepage": "http://www.codeages.com"
+        }
+    ],
     "require": {
         "phpoffice/phpword": "^0.16.0",
         "php": ">=5.3.3"
