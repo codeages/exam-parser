@@ -7,7 +7,7 @@ use ExamParser\Writer\WriteDocx;
 
 class WriterDocxTest extends BaseTestCase
 {
-    public function testExport()
+    public function testWrite()
     {
         $questions = array(
             array(
@@ -67,7 +67,7 @@ class WriterDocxTest extends BaseTestCase
             ),
         );
 
-        $writeDocx = new WriteDocx('export.docx');
-        $writeDocx->export($questions);
+        $writeDocx = new WriteDocx('export');
+        $writeDocx->write($questions);
     }
 }
