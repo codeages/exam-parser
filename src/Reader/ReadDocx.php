@@ -12,6 +12,11 @@ class ReadDocx
     const DOCUMENT_RELS_XML_PATH = 'word/_rels/document.xml.rels';
 
     const DOCUMENT_PREFIX = 'word/';
+
+    const CM_EMU = 360000;
+
+    const CM_PX = 25; //电脑屏幕72ppi，厘米和像素的换算规则
+
     /**
      * @var string
      */
@@ -89,11 +94,17 @@ class ReadDocx
 
         foreach ($imagesList as $key => $imageXml) {
             $imageId = $imageXml->getElementsByTagName('blip')->item(0)->getAttribute('r:embed');
+            $imageExtend = $imageXml->getElementsByTagName('extent')->item(0);
+            $cx = (int) ($imageExtend->getAttribute('cx') / self::CM_EMU * self::CM_PX);
+            $cy = (int) ($imageExtend->getAttribute('cy') / self::CM_EMU * self::CM_PX);
+            $htmlCx = "width=\"{$cx}\"";
+            $htmlCy = "height=\"{$cy}\"";
+
             if (isset($rels[$imageId])) {
                 $file = $this->getZipResource($rels[$imageId]);
                 if ($file) {
                     $ext = pathinfo($rels[$imageId], PATHINFO_EXTENSION);
-                    $imageXml->textContent = sprintf('<img src="data:image/%s;base64,%s">', $ext, base64_encode($file));
+                    $imageXml->textContent = sprintf('<img src="data:image/%s;base64,%s" %s %s>', $ext, base64_encode($file), $htmlCx, $htmlCy);
                 }
             }
         }
