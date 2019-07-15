@@ -2,7 +2,7 @@
 
 namespace ExamParser\Parser\QuestionType;
 
-class SingleChoice extends AbstractQuestion
+class Material extends AbstractQuestion
 {
     public function convert()
     {

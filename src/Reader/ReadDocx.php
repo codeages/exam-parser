@@ -112,6 +112,7 @@ class ReadDocx
         $paragraphList = $this->docXml->getElementsByTagName('p');
         $text = '';
         foreach ($paragraphList as $paragraph) {
+//            $text .= '<p>'.$paragraph->textContent.'</p>'.PHP_EOL;
             $text .= $paragraph->textContent.PHP_EOL;
         }
 
