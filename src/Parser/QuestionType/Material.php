@@ -4,7 +4,7 @@ namespace ExamParser\Parser\QuestionType;
 
 class Material extends AbstractQuestion
 {
-    public function convert()
+    public function convert($questionLines)
     {
     }
 }

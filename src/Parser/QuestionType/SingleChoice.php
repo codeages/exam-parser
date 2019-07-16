@@ -4,7 +4,7 @@ namespace ExamParser\Parser\QuestionType;
 
 class SingleChoice extends AbstractQuestion
 {
-    public function convert()
+    public function convert($questionLines)
     {
     }
 }
