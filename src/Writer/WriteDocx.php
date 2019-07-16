@@ -30,7 +30,7 @@ class WriteDocx
         $this->writeIn('【导出结束】');
 
         $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
-        $objWriter->save($this->filename.'.docx');
+        $objWriter->save('/tmp/'.$this->filename.'.docx');
     }
 
     protected function buildQuestionText($type, $question)
