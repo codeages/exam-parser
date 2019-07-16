@@ -9,6 +9,11 @@ class Choice extends AbstractQuestion
         $stemStatus = false;
         $question = array(
             'stem' => '',
+            'options' => array(),
+            'difficulty' => 'normal',
+            'score' => 2.0,
+            'analysis' => '',
+            'answers' => array(),
         );
         $answers = array();
         foreach ($questionLines as $line) {
@@ -31,44 +36,52 @@ class Choice extends AbstractQuestion
             if ($this->matchScore($question, $line)) {
                 $stemStatus = true;
                 continue;
-            };
-
-            if (!$stemStatus) {
-                $question['stem'] .= preg_replace('/^\d{0,5}(\.|、|。|\s)/','',$line).PHP_EOL;
             }
 
+            //处理解析
+            if ($this->matchAnalysis($question, $line)) {
+                $stemStatus = true;
+                continue;
+            }
+
+            if (!$stemStatus) {
+                $question['stem'] .= preg_replace('/^\d{0,5}(\.|、|。|\s)/', '', $line).PHP_EOL;
+            }
         }
+
         return $question;
     }
 
     protected function matchOptions(&$question, $line)
     {
         if (preg_match('/<#([A-Z])#>/', $line, $matches)) {
-            $question['options'][ord($matches[1])-65] = preg_replace('/<#([A-Z])#>/', '', $line);
+            $question['options'][ord($matches[1]) - 65] = preg_replace('/<#([A-Z])#>/', '', $line);
+
             return true;
         }
+
         return false;
     }
 
     protected function matchAnswers(&$question, $line)
     {
-        if (strpos(trim($line), self::ANSWER_SIGNAL) === 0) {
+        if (0 === strpos(trim($line), self::ANSWER_SIGNAL)) {
             preg_match_all('/[A-Z]/', $line, $matches);
             if ($matches) {
-                foreach($matches[0] as $answer) {
-                    $answers[] = ord($answer)-65;
+                foreach ($matches[0] as $answer) {
+                    $answers[] = ord($answer) - 65;
                 }
             }
             $question['answers'] = $answers;
             if (count($answers) > 1) {
                 $question['type'] = 'choice';
-            }else {
+            } else {
                 $question['type'] = 'single_choice';
             }
+
             return true;
         }
+
         return false;
     }
-
-    
 }

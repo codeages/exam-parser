@@ -48,7 +48,7 @@ class Parser
     protected function filterStartSignal()
     {
         $bodyArray = explode(PHP_EOL.self::START_SINGLE.PHP_EOL, $this->body);
-        if (count($bodyArray) == 2) {
+        if (2 == count($bodyArray)) {
             return $bodyArray[1];
         }
 
@@ -57,7 +57,7 @@ class Parser
 
     protected function filterMaterialSignal($content)
     {
-        $pattern = "/".PHP_EOL."【材料题开始】(\S|\s){0,}【材料题结束】".PHP_EOL."/";
+        $pattern = '/'.PHP_EOL."【材料题开始】(\S|\s){0,}【材料题结束】".PHP_EOL.'/';
         $replacement = "preg_replace('/\\n\\n/', '<#===========#>', $2)";
         $content = preg_replace_callback(
             $pattern,
@@ -65,9 +65,11 @@ class Parser
                 $str = str_replace('【材料题开始】', '<#材料题开始#>', $matches[0]);
                 $str = str_replace('【材料题结束】', '<#材料题结束#>', $str);
                 $str = str_replace(PHP_EOL.PHP_EOL, '<#========#>', $str);
+
                 return $str;
-            } ,
+            },
             $content);
+
         return $content;
     }
 
@@ -91,8 +93,9 @@ class Parser
             // }
 
             $questionArray[$index] = $elem;
-            $index++;
+            ++$index;
         }
+
         return $questionArray;
     }
 
@@ -101,22 +104,22 @@ class Parser
         $questionStr = trim($questionStr);
         $question = array();
         $lines = explode(PHP_EOL, $questionStr);
-        $lines = preg_replace('/^(答案|参考答案|正确答案|\[答案\]|\[参考答案\]|\[正确答案\]|【答案】|【正确答案】|【参考答案】)/','<#答案#>',$lines);
-        $lines = preg_replace('/^(难度|\[难度\]|【难度】)/','<#难度#>',$lines);
-        $lines = preg_replace('/^(分数|\[分数\]|【分数】)/','<#分数#>',$lines);
-        $lines = preg_replace('/^(解析|\[解析\]|【解析】)/','<#解析#>',$lines);
+        $lines = preg_replace('/^(答案|参考答案|正确答案|\[答案\]|\[参考答案\]|\[正确答案\]|【答案】|【正确答案】|【参考答案】)/', '<#答案#>', $lines);
+        $lines = preg_replace('/^(难度|\[难度\]|【难度】)/', '<#难度#>', $lines);
+        $lines = preg_replace('/^(分数|\[分数\]|【分数】)/', '<#分数#>', $lines);
+        $lines = preg_replace('/^(解析|\[解析\]|【解析】)/', '<#解析#>', $lines);
         $lines = preg_replace('/^([A-Z])(\.|\\s)/', '<#$1#>', $lines, -1, $count);
         $lines = preg_replace('/(\(正确\)|（正确）)\s{0,}/', '<#正确#>', $lines);
         $lines = preg_replace('/(\(错误\)|（错误）)\s{0,}/', '<#错误#>', $lines);
 
-        if (strpos(trim($lines[0]), self::CODE_MATERIAL_START_SIGNAL) === 0) {
+        if (0 === strpos(trim($lines[0]), self::CODE_MATERIAL_START_SIGNAL)) {
             $type = 'material';
-        } else if (strpos(trim($lines[0]), self::UNCERTAIN_CHOICE_SIGNAL) === 0) {
+        } elseif (0 === strpos(trim($lines[0]), self::UNCERTAIN_CHOICE_SIGNAL)) {
             $type = 'uncertain_choice';
-        }else if ($count == 0) {
+        } elseif (0 == $count) {
             if (preg_match('/\[\[(\S|\s){0,}\]\]/', $lines[0])) {
                 $type = 'fill';
-            } else if (preg_match('/(\<\#正确\#\>|\<\#错误\#\>)/', $lines[0])) {
+            } elseif (preg_match('/(\<\#正确\#\>|\<\#错误\#\>)/', trim(implode('', $lines)))) {
                 $type = 'determine';
             } else {
                 $type = 'essay';
@@ -146,11 +149,11 @@ class Parser
 
     protected function toUnderScore($str)
     {
-        $dstr = preg_replace_callback('/([A-Z]+)/',function($matchs)
-        {
+        $dstr = preg_replace_callback('/([A-Z]+)/', function ($matchs) {
             return '_'.strtolower($matchs[0]);
-        },$str);
-        return trim(preg_replace('/_{2,}/','_',$dstr),'_');
+        }, $str);
+
+        return trim(preg_replace('/_{2,}/', '_', $dstr), '_');
     }
 
     //下划线命名到驼峰命名
@@ -158,16 +161,13 @@ class Parser
     {
         $array = explode('_', $str);
         $result = $array[0];
-        $len=count($array);
-        if($len>1)
-        {
-            for($i=1;$i<$len;$i++)
-            {
-                $result.= ucfirst($array[$i]);
+        $len = count($array);
+        if ($len > 1) {
+            for ($i = 1; $i < $len; ++$i) {
+                $result .= ucfirst($array[$i]);
             }
         }
+
         return $result;
     }
-
-
 }

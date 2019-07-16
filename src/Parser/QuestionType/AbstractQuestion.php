@@ -20,21 +20,22 @@ abstract class AbstractQuestion
 
     protected function matchDifficulty(&$question, $line)
     {
-        if (strpos(trim($line), self::DIFFICULTY_SIGNAL) === 0) {
+        if (0 === strpos(trim($line), self::DIFFICULTY_SIGNAL)) {
             $difficulty = str_replace(self::DIFFICULTY_SIGNAL, '', $line);
             $difficultyCode = 'normal';
-            if (trim($difficulty) == '简单') {
+            if ('简单' == trim($difficulty)) {
                 $difficultyCode = 'simple';
             }
 
-            if (trim($difficulty) == '一般') {
+            if ('一般' == trim($difficulty)) {
                 $difficultyCode = 'normal';
             }
 
-            if (trim($difficulty) == '困难') {
+            if ('困难' == trim($difficulty)) {
                 $difficultyCode = 'difficulty';
             }
-            $question['difficulty'] = $difficultyCode ? : self::DEFAULT_DIFFICULTY;
+            $question['difficulty'] = $difficultyCode ?: self::DEFAULT_DIFFICULTY;
+
             return true;
         }
 
@@ -43,11 +44,24 @@ abstract class AbstractQuestion
 
     protected function matchScore(&$question, $line)
     {
-        if (strpos(trim($line), self::SCORE_SIGNAL) === 0) {
+        if (0 === strpos(trim($line), self::SCORE_SIGNAL)) {
             preg_match('/(([1-9]\d*\.\d*|0\.\d*[1-9]\d*)|[1-9]\d*)/', $line, $matches);
             $question['score'] = isset($matches[0]) ? $matches[0] : self::DEFAULT_SCORE;
+
             return true;
-        };
+        }
+
+        return false;
+    }
+
+    protected function matchAnalysis(&$question, $line)
+    {
+        if (0 === strpos(trim($line), self::ANALYSIS_SIGNAL)) {
+            $analysis = str_replace(self::ANALYSIS_SIGNAL, '', $line);
+            $question['analysis'] = $analysis;
+
+            return true;
+        }
 
         return false;
     }
