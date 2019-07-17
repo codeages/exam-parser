@@ -15,6 +15,6 @@ class ParserTest extends BaseTestCase
         $text = $wordRead->convertImage();
         $parser = new Parser('question', $text);
         $parser->parser();
-        // var_dump($parser->getQuestions());
+        json_encode($parser->getQuestions());
     }
 }

@@ -3,6 +3,7 @@
 namespace ExamParser\Parser\QuestionType;
 
 use ExamParser\Constants\QuestionElement;
+use ExamParser\Parser\Parser;
 
 class Choice extends AbstractQuestion
 {
@@ -16,6 +17,10 @@ class Choice extends AbstractQuestion
             'analysis' => '',
             'answers' => array(),
         );
+        if (0 === strpos(trim($questionLines[0]), Parser::CODE_UNCERTAIN_CHOICE_SIGNAL)) {
+            $question['type'] = 'uncertain_choice';
+            unset($questionLines[0]);
+        }
         $answers = array();
         $preNode = QuestionElement::STEM;
         foreach ($questionLines as $line) {
@@ -80,11 +85,14 @@ class Choice extends AbstractQuestion
                 }
             }
             $question['answers'] = $answers;
-            if (count($answers) > 1) {
-                $question['type'] = 'choice';
-            } else {
-                $question['type'] = 'single_choice';
+            if (empty($question['type'])) {
+                if (count($answers) > 1) {
+                    $question['type'] = 'choice';
+                } else {
+                    $question['type'] = 'single_choice';
+                }
             }
+
             $preNode = QuestionElement::ANSWERS;
 
             return true;

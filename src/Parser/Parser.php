@@ -16,6 +16,8 @@ class Parser
 
     const CODE_MATERIAL_END_SIGNAL = '<#材料题结束#>';
 
+    const CODE_MATERIAL_SUB_QUESTION_START = '<#材料题子题#>';
+
     const UNCERTAIN_CHOICE_SIGNAL = '【不定项选择题】';
 
     const CODE_UNCERTAIN_CHOICE_SIGNAL = '<#不定项选择题#>';
@@ -60,13 +62,13 @@ class Parser
     protected function filterMaterialSignal($content)
     {
         $pattern = '/'.PHP_EOL."【材料题开始】(\S|\s){0,}【材料题结束】".PHP_EOL.'/';
-        $replacement = "preg_replace('/\\n\\n/', '<#===========#>', $2)";
         $content = preg_replace_callback(
             $pattern,
             function ($matches) {
                 $str = str_replace('【材料题开始】', '<#材料题开始#>', $matches[0]);
                 $str = str_replace('【材料题结束】', '<#材料题结束#>', $str);
-                $str = str_replace(PHP_EOL.PHP_EOL, '<#========#>', $str);
+                $pattern = '/'.PHP_EOL.'{2,}/';
+                $str = preg_replace($pattern, PHP_EOL.'<#材料题子题#>', $str);
 
                 return $str;
             },
@@ -77,7 +79,8 @@ class Parser
 
     protected function resolveContent($content)
     {
-        $contentArray = explode(PHP_EOL.PHP_EOL, $content);
+        $pattern = '/'.PHP_EOL.'{2,}/';
+        $contentArray = preg_split($pattern, $content, -1, PREG_SPLIT_NO_EMPTY);
         $index = 0;
         foreach ($contentArray as $elem) {
             // if (strpos(trim($elem), self::MATERIAL_START_SIGNAL) === 0) {
@@ -117,8 +120,6 @@ class Parser
 
         if (0 === strpos(trim($lines[0]), self::CODE_MATERIAL_START_SIGNAL)) {
             $type = 'material';
-        } elseif (0 === strpos(trim($lines[0]), self::CODE_UNCERTAIN_CHOICE_SIGNAL)) {
-            $type = 'uncertain_choice';
         } elseif (0 == $count) {
             if (preg_match('/\[\[(\S|\s).*?\]\]/', $lines[0])) {
                 $type = 'fill';
@@ -134,16 +135,6 @@ class Parser
         $questionType = QuestionTypeFactory::create($this->toCamelCase($type));
         $this->questions[] = $questionType->convert($lines);
     }
-
-    // public function getTestpaperTitle()
-    // {
-
-    // }
-
-    // public function getTestpaperDesc()
-    // {
-
-    // }
 
     public function getQuestions()
     {

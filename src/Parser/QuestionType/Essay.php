@@ -8,7 +8,6 @@ class Essay extends AbstractQuestion
 {
     public function convert($questionLines)
     {
-        $node = '';
         $question = array(
             'type' => 'essay',
             'stem' => '',

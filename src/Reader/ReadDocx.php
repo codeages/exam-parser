@@ -4,6 +4,7 @@ namespace ExamParser\Reader;
 
 use ZipArchive;
 use DOMDocument;
+use Rhumsaa\Uuid\Uuid;
 
 class ReadDocx
 {
@@ -16,6 +17,8 @@ class ReadDocx
     const CM_EMU = 360000;
 
     const CM_PX = 25; //电脑屏幕72ppi，厘米和像素的换算规则
+
+    protected $resourceTmpPath = '/tmp';
 
     /**
      * @var string
@@ -32,9 +35,12 @@ class ReadDocx
      */
     protected $relsXml;
 
-    public function __construct($docxPath)
+    public function __construct($docxPath, $options = array())
     {
         $this->docxPath = $docxPath;
+        if (isset($options['resourceTmpPath'])) {
+            $this->resourceTmpPath = $options['resourceTmpPath'];
+        }
         $this->readZip();
     }
 
@@ -104,7 +110,10 @@ class ReadDocx
                 $file = $this->getZipResource($rels[$imageId]);
                 if ($file) {
                     $ext = pathinfo($rels[$imageId], PATHINFO_EXTENSION);
-                    $imageXml->textContent = sprintf('<img src="data:image/%s;base64,%s" %s %s>', $ext, base64_encode($file), $htmlCx, $htmlCy);
+                    $path = $this->resourceTmpPath.'/'.Uuid::uuid4().'.'.$ext;
+                    file_put_contents($path, $file);
+                    $imageXml->textContent = sprintf('<img src="%s" %s %s>', $path, $htmlCx, $htmlCy);
+                    // $imageXml->textContent = '1234';
                 }
             }
         }

@@ -8,7 +8,6 @@ class Fill extends AbstractQuestion
 {
     public function convert($questionLines)
     {
-        $node = '';
         $question = array(
             'type' => 'fill',
             'stem' => '',
