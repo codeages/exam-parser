@@ -42,7 +42,6 @@ class Fill extends AbstractQuestion
                 $question['stem'] .= preg_replace('/^\d{0,5}(\.|、|。|\s)/', '', $line).PHP_EOL;
             }
         }
-        var_dump($question);
 
         return $question;
     }
