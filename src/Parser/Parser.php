@@ -120,7 +120,7 @@ class Parser
         } elseif (0 === strpos(trim($lines[0]), self::CODE_UNCERTAIN_CHOICE_SIGNAL)) {
             $type = 'uncertain_choice';
         } elseif (0 == $count) {
-            if (preg_match('/\[\[(\S|\s){0,}\]\]/', $lines[0])) {
+            if (preg_match('/\[\[(\S|\s).*?\]\]/', $lines[0])) {
                 $type = 'fill';
             } elseif (preg_match('/(\<\#正确\#\>|\<\#错误\#\>)/', trim(implode('', $lines)))) {
                 $type = 'determine';

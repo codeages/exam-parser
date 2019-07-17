@@ -46,7 +46,7 @@ class Essay extends AbstractQuestion
         return $question;
     }
 
-    protected function matchAnswer($question, $line, &$preNode)
+    protected function matchAnswer(&$question, $line, &$preNode)
     {
         if (0 === strpos(trim($line), self::ANSWER_SIGNAL)) {
             $answer = str_replace(self::ANSWER_SIGNAL, '', $line);

@@ -59,6 +59,10 @@ class Determine extends AbstractQuestion
             if (self::ANSWER_WRONG_SIGNAL == $matches[0]) {
                 $question['answer'] = false;
             }
+
+            $stemStr = str_replace(self::ANSWER_RIGHT_SIGNAL, '', $line);
+            $stemStr = str_replace(self::ANSWER_WRONG_SIGNAL, '', $stemStr);
+            $question['stem'] .= preg_replace('/^\d{0,5}(\.|、|。|\s)/', '', $stemStr).PHP_EOL;
             $preNode = QuestionElement::ANSWER;
 
             return true;
