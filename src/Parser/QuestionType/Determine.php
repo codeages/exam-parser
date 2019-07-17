@@ -2,6 +2,8 @@
 
 namespace ExamParser\Parser\QuestionType;
 
+use ExamParser\Constants\QuestionElement;
+
 class Determine extends AbstractQuestion
 {
     const ANSWER_RIGHT_SIGNAL = '<#正确#>';
@@ -10,7 +12,6 @@ class Determine extends AbstractQuestion
 
     public function convert($questionLines)
     {
-        $stemStatus = false;
         $question = array(
             'type' => 'determine',
             'stem' => '',
@@ -20,30 +21,27 @@ class Determine extends AbstractQuestion
             'answer' => null,
         );
         $answers = array();
+        $preNode = QuestionElement::STEM;
         foreach ($questionLines as $line) {
             //处理答案
-            if ($this->matchAnswer($question, $line)) {
-                $stemStatus = true;
+            if ($this->matchAnswer($question, $line, $preNode)) {
                 continue;
             }
             //处理难度
-            if ($this->matchDifficulty($question, $line)) {
-                $stemStatus = true;
+            if ($this->matchDifficulty($question, $line, $preNode)) {
                 continue;
             }
             //处理分数
-            if ($this->matchScore($question, $line)) {
-                $stemStatus = true;
+            if ($this->matchScore($question, $line, $preNode)) {
                 continue;
             }
 
             //处理解析
-            if ($this->matchAnalysis($question, $line)) {
-                $stemStatus = true;
+            if ($this->matchAnalysis($question, $line, $preNode)) {
                 continue;
             }
 
-            if (!$stemStatus) {
+            if (QuestionElement::STEM == $preNode) {
                 $question['stem'] .= preg_replace('/^\d{0,5}(\.|、|。|\s)/', '', $line).PHP_EOL;
             }
         }
@@ -51,7 +49,7 @@ class Determine extends AbstractQuestion
         return $question;
     }
 
-    protected function matchAnswer(&$question, $line)
+    protected function matchAnswer(&$question, $line, &$preNode)
     {
         $pattern = '/('.self::ANSWER_RIGHT_SIGNAL.'|'.self::ANSWER_WRONG_SIGNAL.')/';
         if (preg_match($pattern, $line, $matches)) {
@@ -61,6 +59,7 @@ class Determine extends AbstractQuestion
             if (self::ANSWER_WRONG_SIGNAL == $matches[0]) {
                 $question['answer'] = false;
             }
+            $preNode = QuestionElement::ANSWER;
 
             return true;
         }

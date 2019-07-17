@@ -2,11 +2,12 @@
 
 namespace ExamParser\Parser\QuestionType;
 
+use ExamParser\Constants\QuestionElement;
+
 class Choice extends AbstractQuestion
 {
     public function convert($questionLines)
     {
-        $stemStatus = false;
         $question = array(
             'stem' => '',
             'options' => array(),
@@ -16,35 +17,31 @@ class Choice extends AbstractQuestion
             'answers' => array(),
         );
         $answers = array();
+        $preNode = QuestionElement::STEM;
         foreach ($questionLines as $line) {
             //处理选项
-            if ($this->matchOptions($question, $line)) {
-                $stemStatus = true;
+            if ($this->matchOptions($question, $line, $preNode)) {
                 continue;
             }
             //处理答案
-            if ($this->matchAnswers($question, $line)) {
-                $stemStatus = true;
+            if ($this->matchAnswers($question, $line, $preNode)) {
                 continue;
             }
             //处理难度
-            if ($this->matchDifficulty($question, $line)) {
-                $stemStatus = true;
+            if ($this->matchDifficulty($question, $line, $preNode)) {
                 continue;
             }
             //处理分数
-            if ($this->matchScore($question, $line)) {
-                $stemStatus = true;
+            if ($this->matchScore($question, $line, $preNode)) {
                 continue;
             }
 
             //处理解析
-            if ($this->matchAnalysis($question, $line)) {
-                $stemStatus = true;
+            if ($this->matchAnalysis($question, $line, $preNode)) {
                 continue;
             }
 
-            if (!$stemStatus) {
+            if (QuestionElement::STEM == $preNode) {
                 $question['stem'] .= preg_replace('/^\d{0,5}(\.|、|。|\s)/', '', $line).PHP_EOL;
             }
         }
@@ -52,10 +49,20 @@ class Choice extends AbstractQuestion
         return $question;
     }
 
-    protected function matchOptions(&$question, $line)
+    protected function matchOptions(&$question, $line, &$preNode)
     {
+        $node = 'default';
+        if (true === strpos($preNode, '-')) {
+            list($node, $index) = explode('-', $preNode);
+        }
+        if (!$this->hasSignal($line) && QuestionElement::OPTIONS == $node) {
+            $question['options'][$index] .= $line;
+
+            return true;
+        }
         if (preg_match('/<#([A-Z])#>/', $line, $matches)) {
             $question['options'][ord($matches[1]) - 65] = preg_replace('/<#([A-Z])#>/', '', $line);
+            $preNode = QuestionElement::OPTIONS.'-'.(ord($matches[1]) - 65);
 
             return true;
         }
@@ -63,7 +70,7 @@ class Choice extends AbstractQuestion
         return false;
     }
 
-    protected function matchAnswers(&$question, $line)
+    protected function matchAnswers(&$question, $line, &$preNode)
     {
         if (0 === strpos(trim($line), self::ANSWER_SIGNAL)) {
             preg_match_all('/[A-Z]/', $line, $matches);
@@ -78,6 +85,7 @@ class Choice extends AbstractQuestion
             } else {
                 $question['type'] = 'single_choice';
             }
+            $preNode = QuestionElement::ANSWERS;
 
             return true;
         }

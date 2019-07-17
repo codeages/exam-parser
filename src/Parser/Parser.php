@@ -18,6 +18,8 @@ class Parser
 
     const UNCERTAIN_CHOICE_SIGNAL = '【不定项选择题】';
 
+    const CODE_UNCERTAIN_CHOICE_SIGNAL = '<#不定项选择题#>';
+
     protected $type = '';
 
     protected $body = '';
@@ -111,10 +113,11 @@ class Parser
         $lines = preg_replace('/^([A-Z])(\.|\\s)/', '<#$1#>', $lines, -1, $count);
         $lines = preg_replace('/(\(正确\)|（正确）)\s{0,}/', '<#正确#>', $lines);
         $lines = preg_replace('/(\(错误\)|（错误）)\s{0,}/', '<#错误#>', $lines);
+        $lines = preg_replace('/【不定项选择题】/', '<#不定项选择题#>', $lines);
 
         if (0 === strpos(trim($lines[0]), self::CODE_MATERIAL_START_SIGNAL)) {
             $type = 'material';
-        } elseif (0 === strpos(trim($lines[0]), self::UNCERTAIN_CHOICE_SIGNAL)) {
+        } elseif (0 === strpos(trim($lines[0]), self::CODE_UNCERTAIN_CHOICE_SIGNAL)) {
             $type = 'uncertain_choice';
         } elseif (0 == $count) {
             if (preg_match('/\[\[(\S|\s){0,}\]\]/', $lines[0])) {

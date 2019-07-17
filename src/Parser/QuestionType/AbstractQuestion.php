@@ -2,6 +2,8 @@
 
 namespace ExamParser\Parser\QuestionType;
 
+use ExamParser\Constants\QuestionElement;
+
 abstract class AbstractQuestion
 {
     const ANSWER_SIGNAL = '<#答案#>';
@@ -18,7 +20,7 @@ abstract class AbstractQuestion
 
     abstract public function convert($questionLines);
 
-    protected function matchDifficulty(&$question, $line)
+    protected function matchDifficulty(&$question, $line, &$preNode)
     {
         if (0 === strpos(trim($line), self::DIFFICULTY_SIGNAL)) {
             $difficulty = str_replace(self::DIFFICULTY_SIGNAL, '', $line);
@@ -35,6 +37,7 @@ abstract class AbstractQuestion
                 $difficultyCode = 'difficulty';
             }
             $question['difficulty'] = $difficultyCode ?: self::DEFAULT_DIFFICULTY;
+            $preNode = QuestionElement::DIFFICULTY;
 
             return true;
         }
@@ -42,11 +45,12 @@ abstract class AbstractQuestion
         return false;
     }
 
-    protected function matchScore(&$question, $line)
+    protected function matchScore(&$question, $line, &$preNode)
     {
         if (0 === strpos(trim($line), self::SCORE_SIGNAL)) {
             preg_match('/(([1-9]\d*\.\d*|0\.\d*[1-9]\d*)|[1-9]\d*)/', $line, $matches);
             $question['score'] = isset($matches[0]) ? $matches[0] : self::DEFAULT_SCORE;
+            $preNode = QuestionElement::SCORE;
 
             return true;
         }
@@ -54,15 +58,27 @@ abstract class AbstractQuestion
         return false;
     }
 
-    protected function matchAnalysis(&$question, $line)
+    protected function matchAnalysis(&$question, $line, &$preNode)
     {
+        if (!$this->hasSignal($line) && QuestionElement::ANALYSIS == $preNode) {
+            $question['analysis'] .= $line;
+
+            return true;
+        }
+
         if (0 === strpos(trim($line), self::ANALYSIS_SIGNAL)) {
             $analysis = str_replace(self::ANALYSIS_SIGNAL, '', $line);
             $question['analysis'] = $analysis;
+            $preNode = QuestionElement::ANALYSIS;
 
             return true;
         }
 
         return false;
+    }
+
+    protected function hasSignal($str)
+    {
+        return preg_match('/<#\S{1,100}#>/', $str);
     }
 }
