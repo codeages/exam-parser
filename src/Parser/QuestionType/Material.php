@@ -69,7 +69,7 @@ class Material extends AbstractQuestion
             }
         }
         foreach ($subQuestions as $lines) {
-            $count = preg_match_all('/\<\#[A-Z]\#\>/', implode(PHP_EOL, $lines));
+            $count = preg_match_all('/\<\#[A-Z]\#\>/', implode(PHP_EOL, $lines), $matches);
             if (0 === strpos(trim($lines[0]), Parser::CODE_MATERIAL_START_SIGNAL)) {
                 $type = 'material';
             } elseif (0 == $count) {
@@ -95,12 +95,10 @@ class Material extends AbstractQuestion
     protected function toCamelCase($str)
     {
         $array = explode('_', $str);
-        $result = $array[0];
+        $result = '';
         $len = count($array);
-        if ($len > 1) {
-            for ($i = 1; $i < $len; ++$i) {
-                $result .= ucfirst($array[$i]);
-            }
+        for ($i = 0; $i < $len; ++$i) {
+            $result .= ucfirst($array[$i]);
         }
 
         return $result;
