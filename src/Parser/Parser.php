@@ -73,6 +73,7 @@ class Parser
                 return $str;
             },
             $content);
+
         return $content;
     }
 

@@ -47,10 +47,11 @@ class Choice extends AbstractQuestion
             }
 
             if (QuestionElement::STEM == $preNode) {
-                $question['stem'] .= preg_replace('/^\d{0,5}(\.|、|。|\s)/', '', $line).PHP_EOL;
+                $question['stem'] .= (empty($question['stem']) ? '' : '<br/>').preg_replace('/^\d{0,5}(\.|、|。|\s)/', '', $line).PHP_EOL;
             }
         }
         $this->checkErrors($question);
+
         return $question;
     }
 
@@ -105,7 +106,7 @@ class Choice extends AbstractQuestion
     protected function checkErrors(&$question)
     {
         //判断题干是否有错
-        if (empty($question[QuestionElement::STEM])){
+        if (empty($question[QuestionElement::STEM])) {
             $question['errors'][] = $this->getError(QuestionElement::STEM, QuestionErrors::NO_STEM);
         }
 

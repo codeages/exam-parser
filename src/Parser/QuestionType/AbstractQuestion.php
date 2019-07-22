@@ -62,7 +62,7 @@ abstract class AbstractQuestion
     protected function matchAnalysis(&$question, $line, &$preNode)
     {
         if (!$this->hasSignal($line) && QuestionElement::ANALYSIS == $preNode) {
-            $question['analysis'] .= $line;
+            $question['analysis'] .= '<br/>'.$line;
 
             return true;
         }
@@ -87,10 +87,10 @@ abstract class AbstractQuestion
     {
         ksort($options);
         $lastKey = end(array_keys($options));
-        $lastKey = $lastKey <1 ? 1 : $lastKey; //options至少两个选项
-        for ($i = 0; $i <= $lastKey; $i++) {
+        $lastKey = $lastKey < 1 ? 1 : $lastKey; //options至少两个选项
+        for ($i = 0; $i <= $lastKey; ++$i) {
             echo $i;
-            if (!array_key_exists($i,$options)) {
+            if (!array_key_exists($i, $options)) {
                 $options[$i] = '';
             }
         }
