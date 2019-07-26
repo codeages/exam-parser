@@ -58,7 +58,7 @@ class Fill extends AbstractQuestion
                 $answer = rtrim($answer, ']');
             }
             $question['answers'] = $matches[0];
-            $question['stem'] .= preg_replace('/^\d{0,5}(\.|、|。|\s)/', '', $line).PHP_EOL;
+            $question['stem'] .= preg_replace('/^((\d{0,5}(\.|、|。|\s))|((\(|（)\d{0,5}(\)|）)))/', '', $line);
             $preNode = QuestionElement::ANSWERS;
 
             return true;
