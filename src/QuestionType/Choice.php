@@ -1,8 +1,8 @@
 <?php
 
-namespace ExamParser\Parser\ParserType;
+namespace ExamParser\QuestionType;
 
-use ExamParser\Parser\QuestionType\QuestionInterface;
+use ExamParser\QuestionType\QuestionInterface;
 
 class Choice implements QuestionInterface
 {
@@ -14,5 +14,10 @@ class Choice implements QuestionInterface
     public function isMatch($questionLines)
     {
         // TODO: Implement isMatch() method.
+    }
+
+    public function write($question)
+    {
+        // TODO: Implement write() method.
     }
 }

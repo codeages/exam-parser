@@ -1,6 +1,6 @@
 <?php
 
-namespace ExamParser\Parser\Util;
+namespace ExamParser\Util;
 
 class CommonUtil
 {

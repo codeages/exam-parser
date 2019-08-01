@@ -2,7 +2,7 @@
 
 namespace ExamParser\Parser;
 
-use ExamParser\Parser\Util\CommonUtil;
+use ExamParser\Util\CommonUtil;
 
 class Parser
 {

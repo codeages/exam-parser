@@ -1,8 +1,8 @@
 <?php
 
-namespace ExamParser\Parser\QuestionType;
+namespace ExamParser\QuestionType;
 
-use ExamParser\Parser\Util\CommonUtil;
+use ExamParser\Util\CommonUtil;
 
 class QuestionFactory
 {
