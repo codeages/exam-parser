@@ -2,6 +2,7 @@
 
 namespace ExamParser\Reader;
 
+use ExamParser\Exception\ExamException;
 use ZipArchive;
 use DOMDocument;
 use Rhumsaa\Uuid\Uuid;
@@ -89,7 +90,7 @@ class ReadDocx
                     $ext = pathinfo($rels[$imageId], PATHINFO_EXTENSION);
                     $path = $this->resourceTmpPath.'/'.Uuid::uuid4().'.'.$ext;
                     file_put_contents($path, $file);
-                    $imageXml->textContent = sprintf('<img src="%s" %s %s>', $path, $htmlCx, $htmlCy);
+                    $imageXml->nodeValue = sprintf('<img src="%s" %s %s>', $path, $htmlCx, $htmlCy);
                 }
             }
         }
@@ -113,7 +114,7 @@ class ReadDocx
             }
             $zip->close();
         } else {
-            die('non zip file');
+            throw new ExamException("file format is invalid");
         }
         $docXml = new DOMDocument();
         $docXml->encoding = mb_detect_encoding($xml);
@@ -139,6 +140,11 @@ class ReadDocx
         return $rels;
     }
 
+    /**
+     * @param $filename
+     * @return false|string|null
+     * @throws ExamException
+     */
     protected function getZipResource($filename)
     {
         $filename = self::DOCUMENT_PREFIX.$filename;
@@ -151,7 +157,7 @@ class ReadDocx
             }
             $zip->close();
         } else {
-            die('non zip file');
+            throw new ExamException("file format is invalid");
         }
 
         return $file;
