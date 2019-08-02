@@ -77,7 +77,11 @@ class ReadDocx
         $imagesList = $this->docXml->getElementsByTagName('drawing');
 
         foreach ($imagesList as $key => $imageXml) {
-            $imageId = $imageXml->getElementsByTagName('blip')->item(0)->getAttribute('r:embed');
+            $img = $imageXml->getElementsByTagName('blip')->item(0);
+            if (empty($img)) {
+                continue;
+            }
+            $imageId = $img->getAttribute('r:embed');
             $imageExtend = $imageXml->getElementsByTagName('extent')->item(0);
             $cx = (int) ($imageExtend->getAttribute('cx') / self::CM_EMU * self::CM_PX);
             $cy = (int) ($imageExtend->getAttribute('cy') / self::CM_EMU * self::CM_PX);

@@ -48,6 +48,9 @@ class Parser
         }
     }
 
+    /**
+     * @return string
+     */
     protected function filterStartSignal()
     {
         $bodyArray = explode(PHP_EOL.self::START_SINGLE.PHP_EOL, $this->body);
@@ -93,7 +96,7 @@ class Parser
     {
         $questionStr = trim($questionStr);
         $lines = explode(PHP_EOL, $questionStr);
-        $lines = preg_replace('/^(答案|参考答案|正确答案|\[答案\]|\[参考答案\]|\[正确答案\]|【答案】|【正确答案】|【参考答案】)/', '<#答案#>', $lines);
+        $lines = preg_replace('/^(答案|参考答案|正确答案|\[答案\]|\[参考答案\]|\[正确答案\]|【答案】|【正确答案】|【参考答案】)(：|:|\s)/', '<#答案#>', $lines);
         $lines = preg_replace('/^(难度|\[难度\]|【难度】)/', '<#难度#>', $lines);
         $lines = preg_replace('/^(分数|\[分数\]|【分数】)/', '<#分数#>', $lines);
         $lines = preg_replace('/^(解析|\[解析\]|【解析】)/', '<#解析#>', $lines);
