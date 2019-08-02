@@ -118,7 +118,7 @@ class ReadDocx
             }
             $zip->close();
         } else {
-            throw new ExamException("file format is invalid");
+            throw new ExamException('file format is invalid');
         }
         $docXml = new DOMDocument();
         $docXml->encoding = mb_detect_encoding($xml);
@@ -146,7 +146,9 @@ class ReadDocx
 
     /**
      * @param $filename
+     *
      * @return false|string|null
+     *
      * @throws ExamException
      */
     protected function getZipResource($filename)
@@ -161,7 +163,7 @@ class ReadDocx
             }
             $zip->close();
         } else {
-            throw new ExamException("file format is invalid");
+            throw new ExamException('file format is invalid');
         }
 
         return $file;
