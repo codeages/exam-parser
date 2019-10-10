@@ -181,19 +181,16 @@ class ReadDocx
             $imageId = $img->getAttribute('r:id');
             $imageShape = $imageXml->getElementsByTagName('shape')->item(0);
             $style = $imageShape->getAttribute('style');
-            preg_match('/width:(.*?)pt;/', $style, $widthMatches);
-            preg_match('/height:(.*?)pt;/', $style, $heightMatches);
+            preg_match('/width:(.*?);/', $style, $widthMatches);
+            preg_match('/height:(.*?);/', $style, $heightMatches);
 
             if (isset($rels[$imageId]) && isset($widthMatches[1]) && isset($heightMatches[1])) {
-                $width = (int)($widthMatches[1] * self::PT_PX);
-                $height = (int)($heightMatches[1] * self::PT_PX);
-
                 $file = $this->getZipResource($rels[$imageId]);
                 if ($file) {
                     $ext = pathinfo($rels[$imageId], PATHINFO_EXTENSION);
                     $path = $this->resourceTmpPath . '/' . Uuid::uuid4() . '.' . $ext;
                     file_put_contents($path, $file);
-                    $imageXml->nodeValue = sprintf('<img src="%s" width="%s" height="%s">', $path, $width, $height);
+                    $imageXml->nodeValue = sprintf('<img src="%s" width="%s" height="%s">', $path, $widthMatches[1], $heightMatches[1]);
                 }
             }
         }
