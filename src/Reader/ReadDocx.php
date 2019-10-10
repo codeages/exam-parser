@@ -185,13 +185,13 @@ class ReadDocx
             preg_match('/height:(.*?)pt;/', $style, $heightMatches);
 
             if (isset($rels[$imageId]) && isset($widthMatches[1]) && isset($heightMatches[1])) {
-                $width = (int) ($widthMatches[1] * self::PT_PX);
-                $height = (int) ($heightMatches[1] * self::PT_PX);
+                $width = (int)($widthMatches[1] * self::PT_PX);
+                $height = (int)($heightMatches[1] * self::PT_PX);
 
                 $file = $this->getZipResource($rels[$imageId]);
                 if ($file) {
                     $ext = pathinfo($rels[$imageId], PATHINFO_EXTENSION);
-                    $path = $this->resourceTmpPath.'/'.Uuid::uuid4().'.'.$ext;
+                    $path = $this->resourceTmpPath . '/' . Uuid::uuid4() . '.' . $ext;
                     file_put_contents($path, $file);
                     $imageXml->nodeValue = sprintf('<img src="%s" width="%s" height="%s">', $path, $width, $height);
                 }
