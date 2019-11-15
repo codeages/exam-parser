@@ -9,7 +9,7 @@ class QuestionFactory
     public static function create($type)
     {
         $questionType = CommonUtil::toCamelCase($type);
-        $class = '\\ExamParser\\Parser\\QuestionType\\'.$questionType;
+        $class = '\\ExamParser\\QuestionType\\'.$questionType;
 
         return new $class();
     }

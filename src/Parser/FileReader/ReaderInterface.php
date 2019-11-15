@@ -4,5 +4,7 @@ namespace ExamParser\Parser\FileReader;
 
 interface ReaderInterface
 {
-    public function read($filePath, $options);
+    public function read();
+
+    public function getFilePath();
 }
