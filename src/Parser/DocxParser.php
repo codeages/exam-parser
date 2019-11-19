@@ -6,7 +6,7 @@ use ExamParser\Constants\ParserSignal;
 use ExamParser\Parser\FileReader\DocxReader;
 use ExamParser\QuestionType\QuestionFactory;
 
-class DocxParser implements ParserInterface
+class DocxParser extends BaseParser implements ParserInterface
 {
     protected $questions = array();
 

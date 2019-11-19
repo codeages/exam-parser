@@ -2,7 +2,6 @@
 
 namespace ExamParser\Exception;
 
-class TypeNotFoundException extends \Exception
+class TypeNotFoundException extends ExamException
 {
-
 }

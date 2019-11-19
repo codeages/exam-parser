@@ -1,6 +1,6 @@
 <?php
 
-namespace ExamParser\Output;
+namespace ExamParser\Dumper;
 
 interface OutputInterface
 {

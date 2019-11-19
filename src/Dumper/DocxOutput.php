@@ -1,6 +1,6 @@
 <?php
 
-namespace ExamParser\Output;
+namespace ExamParser\Dumper;
 
 class DocxOutput implements OutputInterface
 {

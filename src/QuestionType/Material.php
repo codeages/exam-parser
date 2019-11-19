@@ -5,7 +5,6 @@ namespace ExamParser\QuestionType;
 use ExamParser\Constants\ParserSignal;
 use ExamParser\Constants\QuestionElement;
 use ExamParser\Constants\QuestionErrors;
-use ExamParser\Parser\Parser;
 
 class Material extends AbstractQuestion implements QuestionInterface
 {
