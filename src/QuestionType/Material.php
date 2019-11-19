@@ -92,7 +92,7 @@ class Material extends AbstractQuestion implements QuestionInterface
                 $type = 'choice';
             }
 
-            $questionType = QuestionTypeFactory::create($this->toCamelCase($type));
+            $questionType = QuestionFactory::create($this->toCamelCase($type));
             $this->subQuestions[] = $questionType->convert($lines);
         }
 

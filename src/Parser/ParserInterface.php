@@ -6,6 +6,6 @@ interface ParserInterface
 {
     public function parser($content);
 
-    public function read($filePath, $options = array());
+    public function read($filePath);
 
 }
