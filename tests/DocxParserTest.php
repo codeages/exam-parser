@@ -20,9 +20,4 @@ class DocxParserTest extends BaseTestCase
         $questions = $parser->parser($content);
         $this->assertCount(7, $questions);
     }
-
-    public function testParserSingleChoice()
-    {
-
-    }
 }

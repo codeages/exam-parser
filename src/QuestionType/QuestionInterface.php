@@ -9,4 +9,6 @@ interface QuestionInterface
     public function isMatch($questionLines);
 
     public function write($question);
+
+    public function replaceSignals(&$content);
 }

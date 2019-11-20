@@ -52,6 +52,11 @@ class Determine extends AbstractQuestion implements QuestionInterface
         return $question;
     }
 
+    public function isMatch($questionLines)
+    {
+        preg_match('/(\<\#正确\#\>|\<\#错误\#\>)/', trim(implode('', $questionLines)));
+    }
+
     public function write($question)
     {
         // TODO: Implement write() method.

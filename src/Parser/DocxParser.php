@@ -21,17 +21,4 @@ class DocxParser extends BaseParser implements ParserInterface
         return $reader->read();
     }
 
-    public function parser($content)
-    {
-        $content = $this->filterStartSignal($content);
-        $content = $this->filterMaterialSignal($content);
-        $questionsArray = $this->resolveContent($content);
-        foreach ($questionsArray as $question) {
-            $this->matchQuestion($question);
-        }
-
-        return $this->questions;
-    }
-
-
 }

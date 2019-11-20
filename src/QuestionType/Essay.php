@@ -17,7 +17,6 @@ class Essay extends AbstractQuestion implements QuestionInterface
             'analysis' => '',
             'answer' => '',
         );
-        $answers = array();
         $preNode = QuestionElement::STEM;
         foreach ($questionLines as $line) {
             //处理答案
@@ -47,6 +46,11 @@ class Essay extends AbstractQuestion implements QuestionInterface
         $this->checkErrors($question);
 
         return $question;
+    }
+
+    public function isMatch($questionLines)
+    {
+        return !empty($questionLines);
     }
 
     public function write($question)

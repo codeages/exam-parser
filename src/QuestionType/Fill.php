@@ -49,6 +49,11 @@ class Fill extends AbstractQuestion implements QuestionInterface
         return $question;
     }
 
+    public function isMatch($questionLines)
+    {
+        return preg_match('/\[\[(\S|\s)*?\]\]/', $questionLines[0]);
+    }
+
     public function write($question)
     {
         // TODO: Implement write() method.

@@ -4,6 +4,7 @@ namespace ExamParser\Parser;
 
 use ExamParser\Constants\ParserSignal;
 use ExamParser\QuestionType\QuestionFactory;
+use ExamParser\QuestionType\QuestionInterface;
 
 class BaseParser
 {
@@ -18,12 +19,33 @@ class BaseParser
      */
     protected $options = array(
         'resourceTmpPath' => '/tmp',
-        'questionTypes' => array('material', 'fill', 'determine', 'essay', 'choice')
+        'questionTypes' => array('material', 'choice', 'fill', 'determine', 'essay')
     );
+
+    protected $cachedQuestionTypes = array();
 
     public function setOptions($options)
     {
         $this->options = array_merge($this->options, $options);
+    }
+
+    public function parser($content)
+    {
+        $content = $this->filterStartSignal($content);
+        $content = $this->convertQuestionsSignal($content);
+        $questionsArray = $this->resolveContent($content);
+        foreach ($questionsArray as $question) {
+            $this->matchQuestion($question);
+        }
+        return $this->questions;
+    }
+
+    protected function convertQuestionsSignal($content)
+    {
+        foreach ($this->options['questionTypes'] as $type) {
+            $this->getQuestionType($type)->replaceSignals($content);
+        }
+        return $content;
     }
 
     /**
@@ -37,29 +59,6 @@ class BaseParser
         if (2 == count($bodyArray)) {
             return $bodyArray[1];
         }
-
-        return $content;
-    }
-
-    /**
-     * @param $content
-     * @return string|string[]|null
-     * 处理材料题题组
-     */
-    protected function filterMaterialSignal($content)
-    {
-        $pattern = '/'.PHP_EOL."{0,1}【材料题开始】[\s\S]*?【材料题结束】".PHP_EOL.'/';
-        $content = preg_replace_callback(
-            $pattern,
-            function ($matches) {
-                $str = preg_replace('/【材料题开始】\s*/', '<#材料题开始#>'.PHP_EOL, $matches[0]);
-                $str = preg_replace('/\s*【材料题结束】/', PHP_EOL.'<#材料题结束#>', $str);
-                $pattern = '/'.PHP_EOL.'{2,}/';
-                $str = preg_replace($pattern, PHP_EOL.'<#材料题子题#>', $str);
-
-                return $str;
-            },
-            $content);
 
         return $content;
     }
@@ -91,6 +90,18 @@ class BaseParser
     {
         $questionStr = trim($questionStr);
         $lines = explode(PHP_EOL, $questionStr);
+        $lines = $this->replaceSignals($lines);
+
+        foreach ($this->options['questionTypes'] as $type) {
+            if ($this->getQuestionType($type)->isMatch($lines)) {
+                $this->questions[] = $this->getQuestionType($type)->convert($lines);
+                break;
+            }
+        }
+    }
+
+    protected function replaceSignals($lines)
+    {
         $lines = preg_replace('/^(答案|参考答案|正确答案|\[答案\]|\[参考答案\]|\[正确答案\]|【答案】|【正确答案】|【参考答案】)(：|:|)/', '<#答案#>', $lines);
         $lines = preg_replace('/^(难度|\[难度\]|【难度】)/', '<#难度#>', $lines);
         $lines = preg_replace('/^(分数|\[分数\]|【分数】)/', '<#分数#>', $lines);
@@ -98,23 +109,20 @@ class BaseParser
         $lines = preg_replace('/^([A-J])(\.|、|。|\\s)/', '<#$1#>', $lines, -1, $count);
         $lines = preg_replace('/(\(正确\)|（正确）)\s{0,}/', '<#正确#>', $lines);
         $lines = preg_replace('/(\(错误\)|（错误）)\s{0,}/', '<#错误#>', $lines);
-        $lines = preg_replace('/【不定项选择题】/', '<#不定项选择题#>', $lines);
 
-        if (0 === strpos(trim($lines[0]), ParserSignal::CODE_MATERIAL_START_SIGNAL)) {
-            $type = 'material';
-        } elseif (0 == $count) {
-            if (preg_match('/\[\[(\S|\s)*?\]\]/', $lines[0])) {
-                $type = 'fill';
-            } elseif (preg_match('/(\<\#正确\#\>|\<\#错误\#\>)/', trim(implode('', $lines)))) {
-                $type = 'determine';
-            } else {
-                $type = 'essay';
-            }
-        } else {
-            $type = 'choice';
+        return $lines;
+    }
+
+    /**
+     * @param $type
+     * @return QuestionInterface
+     */
+    protected function getQuestionType($type)
+    {
+        if (isset($this->cachedQuestionTypes[$type])) {
+            return $this->cachedQuestionTypes[$type];
         }
 
-        $questionType = QuestionFactory::create($type);
-        $this->questions[] = $questionType->convert($lines);
+        return $this->cachedQuestionTypes[$type] = QuestionFactory::create($type);
     }
 }

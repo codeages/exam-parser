@@ -59,6 +59,28 @@ class Material extends AbstractQuestion implements QuestionInterface
         // TODO: Implement write() method.
     }
 
+    public function isMatch($questionLines)
+    {
+        return (0 === strpos(trim($questionLines[0]), ParserSignal::CODE_MATERIAL_START_SIGNAL));
+    }
+
+    public function replaceSignals(&$content)
+    {
+        $pattern = '/'.PHP_EOL."{0,1}【材料题开始】[\s\S]*?【材料题结束】".PHP_EOL.'/';
+        $content = preg_replace_callback(
+            $pattern,
+            function ($matches) {
+                $str = preg_replace('/【材料题开始】\s*/', '<#材料题开始#>'.PHP_EOL, $matches[0]);
+                $str = preg_replace('/\s*【材料题结束】/', PHP_EOL.'<#材料题结束#>', $str);
+                $pattern = '/'.PHP_EOL.'{2,}/';
+                $str = preg_replace($pattern, PHP_EOL.'<#材料题子题#>', $str);
+
+                return $str;
+            },
+            $content
+        );
+    }
+
     protected function filterSubQuestions(&$questionLines)
     {
         $subQuestions = array();

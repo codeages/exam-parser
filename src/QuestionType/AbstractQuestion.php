@@ -23,9 +23,11 @@ abstract class AbstractQuestion
 
     abstract public function write($question);
 
-    public function isMatch($questionLines)
-    {
+    abstract public function isMatch($questionLines);
 
+    public function replaceSignals(&$content)
+    {
+        return ;
     }
 
     protected function matchDifficulty(&$question, $line, &$preNode)

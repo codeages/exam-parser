@@ -24,29 +24,21 @@ class Choice extends AbstractQuestion implements QuestionInterface
         }
         $preNode = QuestionElement::STEM;
         foreach ($questionLines as $line) {
-            //处理选项
             if ($this->matchOptions($question, $line, $preNode)) {
                 continue;
             }
-            //处理答案
             if ($this->matchAnswers($question, $line, $preNode)) {
                 continue;
             }
-            //处理难度
             if ($this->matchDifficulty($question, $line, $preNode)) {
                 continue;
             }
-            //处理分数
             if ($this->matchScore($question, $line, $preNode)) {
                 continue;
             }
-
-            //处理解析
             if ($this->matchAnalysis($question, $line, $preNode)) {
                 continue;
             }
-
-            //处理题干
             if ($this->matchStem($question, $line, $preNode)) {
                 continue;
             }
@@ -58,6 +50,17 @@ class Choice extends AbstractQuestion implements QuestionInterface
         }
 
         return $question;
+    }
+
+    public function replaceSignals(&$content)
+    {
+        $content = preg_replace('/【不定项选择题】/', '<#不定项选择题#>', $content);
+    }
+
+    public function isMatch($questionLines)
+    {
+        $matches = preg_grep('/<#([A-J])#>/', $questionLines);
+        return !empty($matches);
     }
 
     public function write($question)
