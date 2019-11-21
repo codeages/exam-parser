@@ -2,14 +2,14 @@
 
 namespace ExamParser\Tests;
 
-use ExamParser\Parser\TxtParser;
+use ExamParser\Parser\Parser;
 
 class TxtParserTest extends BaseTestCase
 {
-    public function testRead()
+    public function testParser()
     {
-        $parser = new TxtParser();
-        $content = $parser->read(__DIR__.'/Fixtures/files/txt/question_whole.txt');
+        $parser = new Parser();
+        $content = $parser->parse(__DIR__.'/Fixtures/files/txt/question_whole.txt');
         $this->assertNotEmpty($content);
     }
 }

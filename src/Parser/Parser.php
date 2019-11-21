@@ -3,12 +3,15 @@
 namespace ExamParser\Parser;
 
 use ExamParser\Constants\ParserSignal;
+use ExamParser\Exception\InvalidFileException;
+use ExamParser\Parser\FileReader\ReaderFactory;
+use ExamParser\Parser\FileReader\ReaderInterface;
 use ExamParser\QuestionType\QuestionFactory;
 use ExamParser\QuestionType\QuestionInterface;
 
-class BaseParser
+class Parser implements ParserInterface
 {
-    protected $filePath;
+    protected $questions = array();
 
     /**
      * @var array
@@ -29,8 +32,15 @@ class BaseParser
         $this->options = array_merge($this->options, $options);
     }
 
-    public function parser($content)
+    /**
+     * @param $filePath
+     * @return mixed
+     * @throws InvalidFileException
+     * @throws \ExamParser\Exception\TypeNotFoundException
+     */
+    public function parse($filePath)
     {
+        $content = $this->createReader($filePath)->read();
         $content = $this->filterStartSignal($content);
         $content = $this->convertQuestionsSignal($content);
         $questionsArray = $this->resolveContent($content);
@@ -86,7 +96,7 @@ class BaseParser
      * @param $questionStr
      * 根据题目字符串转化成题目
      */
-    public function matchQuestion($questionStr)
+    protected function matchQuestion($questionStr)
     {
         $questionStr = trim($questionStr);
         $lines = explode(PHP_EOL, $questionStr);
@@ -124,5 +134,15 @@ class BaseParser
         }
 
         return $this->cachedQuestionTypes[$type] = QuestionFactory::create($type);
+    }
+
+    /**
+     * @param $filePath
+     * @return ReaderInterface
+     * @throws InvalidFileException
+     */
+    private function createReader($filePath)
+    {
+        return ReaderFactory::createReader($filePath, $this->options);
     }
 }
