@@ -4,6 +4,7 @@ namespace ExamParser\QuestionType;
 
 use ExamParser\Constants\QuestionElement;
 use ExamParser\Constants\QuestionErrors;
+use ExamParser\Dumper\DumperInterface;
 
 abstract class AbstractQuestion
 {
@@ -21,13 +22,26 @@ abstract class AbstractQuestion
 
     abstract public function convert($questionLines);
 
-    abstract public function write($question);
+    abstract public function dump($item, DumperInterface $dumper);
 
     abstract public function isMatch($questionLines);
 
     public function replaceSignals(&$content)
     {
         return ;
+    }
+
+    protected function dumpCommonModule($item, DumperInterface $dumper)
+    {
+        if (!empty($item['difficulty'])) {
+            $dumper->buildDifficulty($item['difficulty']);
+        }
+        if (!empty($item['score'])) {
+            $dumper->buildScore($item['score']);
+        }
+        if (!empty($item['analysis'])) {
+            $dumper->buildAnalysis($item['analysis']);
+        }
     }
 
     protected function matchDifficulty(&$question, $line, &$preNode)

@@ -5,6 +5,7 @@ namespace ExamParser\QuestionType;
 use ExamParser\Constants\ParserSignal;
 use ExamParser\Constants\QuestionElement;
 use ExamParser\Constants\QuestionErrors;
+use ExamParser\Dumper\DumperInterface;
 
 class Material extends AbstractQuestion implements QuestionInterface
 {
@@ -54,9 +55,18 @@ class Material extends AbstractQuestion implements QuestionInterface
         return $question;
     }
 
-    public function write($question)
+    public function dump($item, DumperInterface $dumper)
     {
-        // TODO: Implement write() method.
+        if ('material' != $item['type']) {
+            return;
+        }
+
+        $dumper->writeTag('【材料题开始】'.PHP_EOL);
+        $dumper->buildStem($item['stem'], $item['num']);
+        $this->dumpCommonModule($item, $dumper);
+        $dumper->addTextBreak();
+        $dumper->dump($item['subs']);
+        $dumper->writeTag('【材料题结束】'.PHP_EOL);
     }
 
     public function isMatch($questionLines)

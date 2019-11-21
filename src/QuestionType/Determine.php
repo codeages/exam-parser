@@ -4,6 +4,7 @@ namespace ExamParser\QuestionType;
 
 use ExamParser\Constants\QuestionElement;
 use ExamParser\Constants\QuestionErrors;
+use ExamParser\Dumper\DumperInterface;
 
 class Determine extends AbstractQuestion implements QuestionInterface
 {
@@ -57,9 +58,14 @@ class Determine extends AbstractQuestion implements QuestionInterface
         preg_match('/(\<\#正确\#\>|\<\#错误\#\>)/', trim(implode('', $questionLines)));
     }
 
-    public function write($question)
+    public function dump($item, DumperInterface $dumper)
     {
-        // TODO: Implement write() method.
+        if ('determine' != $item['type']) {
+            return;
+        }
+
+        $dumper->buildStem($item['stem'], $item['num'], $item['answer']);
+        $this->dumpCommonModule($item, $dumper);
     }
 
     protected function matchAnswer(&$question, $line, &$preNode)

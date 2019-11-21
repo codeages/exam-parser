@@ -4,6 +4,7 @@ namespace ExamParser\QuestionType;
 
 use ExamParser\Constants\QuestionElement;
 use ExamParser\Constants\QuestionErrors;
+use ExamParser\Dumper\DumperInterface;
 
 class Essay extends AbstractQuestion implements QuestionInterface
 {
@@ -53,9 +54,15 @@ class Essay extends AbstractQuestion implements QuestionInterface
         return !empty($questionLines);
     }
 
-    public function write($question)
+    public function dump($item, DumperInterface $dumper)
     {
-        // TODO: Implement write() method.
+        if ('essay' != $item['type']) {
+            return;
+        }
+
+        $dumper->buildStem($item['stem'], $item['num']);
+        $dumper->buildAnswer($item['answer']);
+        $this->dumpCommonModule($item, $dumper);
     }
 
     protected function matchAnswer(&$question, $line, &$preNode)

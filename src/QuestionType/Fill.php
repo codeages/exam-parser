@@ -4,6 +4,7 @@ namespace ExamParser\QuestionType;
 
 use ExamParser\Constants\QuestionElement;
 use ExamParser\Constants\QuestionErrors;
+use ExamParser\Dumper\DumperInterface;
 
 class Fill extends AbstractQuestion implements QuestionInterface
 {
@@ -54,9 +55,14 @@ class Fill extends AbstractQuestion implements QuestionInterface
         return preg_match('/\[\[(\S|\s)*?\]\]/', $questionLines[0]);
     }
 
-    public function write($question)
+    public function dump($item, DumperInterface $dumper)
     {
-        // TODO: Implement write() method.
+        if ('fill' != $item['type']) {
+            return;
+        }
+
+        $dumper->buildStem($item['stem'], $item['num']);
+        $this->dumpCommonModule($item, $dumper);
     }
 
     protected function matchAnswers(&$question, $line, &$preNode)

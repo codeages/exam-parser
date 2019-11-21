@@ -5,6 +5,7 @@ namespace ExamParser\QuestionType;
 use ExamParser\Constants\ParserSignal;
 use ExamParser\Constants\QuestionElement;
 use ExamParser\Constants\QuestionErrors;
+use ExamParser\Dumper\DumperInterface;
 
 class Choice extends AbstractQuestion implements QuestionInterface
 {
@@ -63,9 +64,16 @@ class Choice extends AbstractQuestion implements QuestionInterface
         return !empty($matches);
     }
 
-    public function write($question)
+    public function dump($item, DumperInterface $dumper)
     {
-        // TODO: Implement write() method.
+        if ('choice' != $item['type']) {
+            return;
+        }
+
+        $dumper->buildStem($item['stem'], $item['num']);
+        $dumper->buildOptions($item['options']);
+        $dumper->buildAnswer($item['answer']);
+        $this->dumpCommonModule($item, $dumper);
     }
 
     //补充空余选项
