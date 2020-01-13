@@ -218,6 +218,10 @@ class WriteDocx
 
     protected function writeImg($src)
     {
+        if (!file_exists($src)) {
+            return;
+        }
+
         if (empty($this->textRun)) {
             $this->section->addImage($src);
         } else {
